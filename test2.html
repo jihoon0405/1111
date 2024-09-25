@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Tracks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .track-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .track-item {
+            margin-bottom: 20px;
+        }
+        .album-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .track-info {
+            display: flex;
+            align-items: center;
+        }
+        .track-info div {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Spotify Tracks</h1>
+    <ul class="track-list">
+        {% for track in tracks %}
+            <li class="track-item">
+                <div class="track-info">
+                    <img class="album-image" src="{{ track.album_image }}" alt="Album Image">
+                    <div>
+                        <strong>Title:</strong> {{ track.name }}
+                    </div>
+                    <div>
+                        <strong>Artist:</strong> {{ track.artist }}
+                    </div>
+                    <div>
+                        <strong>Popularity:</strong> {{ track.popularity }}
+                    </div>
+                    <div>
+                        <strong>Genre:</strong> {{ track.genre }}
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

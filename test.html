@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>프로젝트명</title>
+    <style>
+        /* 전체 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between; /* 좌우로 요소를 배치 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding: 10px 20px;
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ddd;
+        }
+        /* 프로젝트명 (좌측 상단) 스타일 */
+        header .titletext {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /* 플레이리스트 (우측 상단) 스타일 */
+        header .pll {
+            font-size: 18px;
+            text-decoration: none;
+            color: black;
+        }
+        a {
+            color: black;
+            text-decoration: none;
+        }
+        .divmenu {
+            list-style-type: none;  /* 리스트의 기본 불릿 제거 */
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;  /* 가로 배치를 위해 flexbox 사용 */
+            justify-content: center; /* 메뉴 중앙 정렬 */
+        }
+        .divmenu li {
+            margin-right: 200px; /* 메뉴 항목 간격 */
+        }
+        .divmenu li:last-child {
+            margin-right: 0; /* 마지막 항목의 오른쪽 여백 제거 */
+        }
+        .divmenu .submenu {
+            list-style-type: none;
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+            display: none; /* 서브메뉴 숨김 */
+            position: absolute; /* 서브메뉴 위치 절대값 */
+            background-color: white;
+            border: 1px solid #ddd;
+        }
+        .divmenu li:hover .submenu {
+            display: block; /* 부모 메뉴에 마우스를 올리면 서브메뉴 표시 */
+        }
+        .submenu li {
+            margin-top: 5px;
+            padding: 10px;
+        }
+        .submenu li a {
+            color: black;
+            text-decoration: none;
+        }
+        .submenu li a:hover {
+            text-decoration: underline;
+        }
+        /* 트랙 리스트 레이아웃 */
+        #track-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* 아이템 간 간격 */
+            justify-content: center; /* 가운데 정렬 */
+        }
+        .track {
+            position: relative;
+            flex: 0 1 calc(20% - 20px); /* 한 줄에 5개씩 (20%) */
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .track img {
+            width: 60%; /* 이미지 크기 설정 */
+            height: auto;
+            border-radius: 15px; /* 모서리를 라운드 처리 */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 이미지에 약간의 그림자 추가 */
+        }
+        .track p {
+            display: none; /* 기본적으로 숨김 */
+            position: absolute;
+            top: 50%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7); /* 반투명 배경 */
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            width: 80%; /* 텍스트 박스 크기 */
+            text-align: center;
+        }
+        .track:hover p {
+            display: block; /* 마우스를 올렸을 때 표시 */
+        }
+        /* 전체 테이블 스타일 */
+        table {
+            width: 100%; /* 테이블을 컨테이너의 전체 너비로 설정 */
+            max-width: 1200px; /* 테이블의 최대 너비 설정 (원하는 크기로 변경 가능) */
+            margin: 20px auto; /* 가운데 정렬 */
+            border-collapse: collapse;
+            font-size: 1.2em; /* 폰트 크기를 크게 설정 */
+            font-family: 'Arial', sans-serif;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        }
+        /* 테이블 헤더 스타일 */
+        table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+            font-weight: bold;
+        }
+        /* 테이블 바디 스타일 */
+        table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        /* 테이블 행 hover 효과 */
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        /* 테이블 셀 스타일 */
+        table th, table td {
+            padding: 15px 20px; /* 셀의 패딩을 늘려 크기를 크게 보이도록 설정 */
+            text-align: left;
+        }
+        /* 테이블 마지막 행 스타일 */
+        table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        /* 차트만 보이게 할 때의 스타일 */
+        #chartContainer {
+            display: none; /* 기본적으로 숨김 */
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 페이지 새로고침 함수
+        function reloadPage() {
+            location.reload();
+        }
+
+        // 차트 데이터를 서버에서 가져와서 표시하는 함수
+        function showTop(topN) {
+            const chartTitle = document.getElementById('chartTitle');
+            const chartContainer = document.getElementById('chartContainer');
+            const trackList = document.getElementById('track-list');
+            
+            // 제목 변경
+            chartTitle.textContent = `실시간 차트 Top ${topN}`;
+            
+            // 차트 데이터 가져오기
+            fetch(`/chart_${topN}.html`)
+                .then(response => response.text())
+                .then(data => {
+                    chartContainer.innerHTML = data;
+                    
+                    // 탑100 클릭 시 트랙 리스트 숨기고 차트만 표시
+                    if (topN === 100) {
+                        trackList.style.display = 'none';
+                        chartContainer.style.display = 'block';
+                    } else {
+                        trackList.style.display = 'flex';
+                        chartContainer.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                    chartContainer.innerHTML = '<p>차트를 불러오는 중 오류가 발생했습니다.</p>';
+                });
+        }
+
+        // 기본적으로 Top 10 차트 표시
+        document.addEventListener('DOMContentLoaded', () => {
+            showTop(10); // 페이지 로드 시 기본적으로 Top 10 표시
+        });
+
+        // 트랙 리스트를 업데이트하는 함수
+        function updateTrackList() {
+            $.ajax({
+                url: '/update_tracks',
+                method: 'GET',
+                success: function(data) {
+                    $('#track-list').empty(); // 기존 트랙 리스트 삭제
+
+                    // 새로운 트랙 리스트를 DOM에 추가
+                    data.forEach(function(track) {
+                        const trackElement = `
+                            <div class="track">
+                                <img src="${track.album_image}" alt="${track.name}">
+                                <p><strong>${track.name}</strong><br>by ${track.artist}<br>Genre: ${track.genre}</p>
+                            </div>
+                        `;
+                        $('#track-list').append(trackElement);
+                    });
+                },
+                error: function(error) {
+                    console.log('Error fetching tracks:', error);
+                }
+            });
+        }
+
+        // 페이지 로드 시 트랙 리스트를 한번 갱신
+        document.addEventListener('DOMContentLoaded', updateTrackList);
+
+        // 10초마다 트랙 리스트 갱신
+        setInterval(updateTrackList, 10000); // 10000ms = 10초
+
+        // 플레이리스트 창 열기
+        function openNewWindow() {
+            window.open('playlist.html', '_blank', 'width=600,height=400');
+        }
+    </script>
+</head>
+<body>
+<header>
+    <h1 class="titletext" onclick="reloadPage()">프로젝트명</h1>
+    <a class="pll" href="#" onclick="openNewWindow()">플레이리스트</a>
+</header>
+<hr/>
+<nav>
+    <ul class="divmenu">
+        <li><b class="menuaction" onclick="showTop(100)">Top 100</b></li> <!-- Top 100 메뉴 -->
+        <li>
+            <b class="menuaction">그룹</b>
+            <ul class="submenu">
+                <li><a href="division/girlgroup.html">걸그룹</a></li>
+                <li><a href="division/boygroup.html">보이그룹</a></li>
+                <li><a href="division/coedgroup.html">혼성그룹</a></li>
+                <li><a href="division/girlsolo.html">여성솔로</a></li>
+                <li><a href="division/boysolo.html">남성솔로</a></li>
+            </ul>
+        </li>
+        <li><b class="menuaction">아티스트파이더</b></li>
+        <li><b class="menuaction">오늘의 추천곡</b></li>
+        <li><b class="menuaction">구간 편집기</b></li>
+    </ul>
+</nav>
+<hr/>
+
+<!-- 트랙 리스트를 차트 위로 이동 -->
+<div id="track-list">
+    <!-- 트랙 정보가 여기 표시됩니다 -->
+</div>
+
+<div id="content">
+    <div>
+        <h1 id="chartTitle" style="color:rgb(120,0,32);margin: 10px; padding:0px;">실시간 차트 Top 10</h1>
+    </div>
+    <div id="chartContainer">
+        <!-- 차트 데이터가 여기 표시됩니다 -->
+    </div>
+</div>
+
+</body>
+</html>
