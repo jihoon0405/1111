@@ -87,7 +87,7 @@ def chart(top_n):
         return songs
 
     def generate_chart_html(songs, top_n=100):
-        html_content = '<table><tbody>'
+        html_content = '<table><tbody>'s
         for idx, song in enumerate(songs[:top_n], 1):
             title = song.select_one('div.ellipsis.rank01 span a').text.strip()
             artist = song.select_one('div.ellipsis.rank02 span').text.strip()
